@@ -1,9 +1,9 @@
-<div align="center">
-  <img src="LINK_AX_HEADER" alt="Rebecca Manager Banner" width="100%" style="border-radius: 12px; box-shadow: 0px 5px 15px rgba(0,0,0,0.3);">
-  <br><br>
-
   # 💠 Rebecca Manager
 <div align="center">
+
+<div align="center">
+  <img src="docs/Banner.jpg" alt="Rebecca Manager Banner" width="600" style="border-radius: 12px; box-shadow: 0px 5px 15px rgba(0,0,0,0.3);">
+  <br><br>
 
 | 💻 Tech & Platform | 📊 Project Stats | 🎨 Theme & License |
 | :---: | :---: | :---: |
