@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Rebecca Manager - by Mohmrzw
+# Final Version: Merged CLI Control Menu
 
 PANEL_DIR="/opt/rebecca"
 PANEL_SERVICE_NAME="rebecca"
@@ -756,6 +757,45 @@ settings_menu() {
     done
 }
 
+# ---------- Rebecca Control (CLI Wrapper) ----------
+
+rebecca_ctrl_menu() {
+    while true; do
+        section_title "Rebecca Control (Wrapper for 'rebecca' CLI)"
+        echo -e "  ${CYAN}1)${RESET} ▶  rebecca up"
+        echo -e "  ${CYAN}2)${RESET} ⏹  rebecca down"
+        echo -e "  ${CYAN}3)${RESET} 🔁 rebecca restart"
+        echo -e "  ${CYAN}4)${RESET} 📊 rebecca status"
+        echo -e "  ${CYAN}5)${RESET} 📜 rebecca logs"
+        echo -e "  ${CYAN}6)${RESET} 🧰 rebecca edit (docker-compose.yml)"
+        echo -e "  ${CYAN}7)${RESET} 🧰 rebecca edit-env (.env)"
+        echo -e "  ${CYAN}8)${RESET} 💾 rebecca backup"
+        echo -e "  ${CYAN}9)${RESET} 🤖 rebecca backup-service"
+        echo -e " ${CYAN}10)${RESET} 🔐 rebecca ssl (built-in)"
+        echo -e " ${CYAN}11)${RESET} ❔ rebecca help"
+        echo
+        echo -e "  ${CYAN}0)${RESET} 🔙 Back"
+        echo
+        echo -ne "${MAGENTA}Select option [0-9] -> ${RESET}"
+        read -r o
+        case "$o" in
+            1) run_cmd "rebecca up" ;;
+            2) run_cmd "rebecca down" ;;
+            3) run_cmd "rebecca restart" ;;
+            4) run_cmd "rebecca status" ;;
+            5) run_cmd "rebecca logs" ;;
+            6) run_cmd "rebecca edit" ;;
+            7) run_cmd "rebecca edit-env" ;;
+            8) run_cmd "rebecca backup" ;;
+            9) run_cmd "rebecca backup-service" ;;
+            10) run_cmd "rebecca ssl" ;;
+            11) run_cmd "rebecca help" ;;
+            0) break ;;
+            *) echo "Invalid option"; sleep 1 ;;
+        esac
+    done
+}
+
 # ---------- Main ----------
 
 main_menu() {
@@ -783,15 +823,7 @@ main_menu() {
             5) admins_menu ;;
             6) settings_menu ;;
             7) domains_overview ;;
-            8) 
-               # Check if rebecca_ctrl_menu exists (it was missing in the source provided)
-               if type rebecca_ctrl_menu &>/dev/null; then
-                   rebecca_ctrl_menu
-               else
-                   echo -e "${RED}Function rebecca_ctrl_menu not found in this script.${RESET}"
-                   sleep 2
-               fi
-               ;;
+            8) rebecca_ctrl_menu ;;
             0) echo -e "${GREEN}Goodbye!${RESET}"; exit 0 ;;
             *) echo "Invalid option"; sleep 1 ;;
         esac
