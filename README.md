@@ -33,12 +33,13 @@ bash <(curl -Ls https://raw.githubusercontent.com/MohmRzw/rebecca-manager/main/i
 
 
 <div align="center">
-  <a href="LINK_VIDEO_YOUTUBE" target="_blank">
-    <img src="docs/image/cover.jpg" 
+  <a href="https://youtu.be/GMdH-_56Zn0" target="_blank">
+    <img src="https://img.youtube.com/vi/GMdH-_56Zn0/maxresdefault.jpg" 
          alt="Video Cover" 
-         width="100%" 
-         style="border-radius: 10px; border: 2px solid #A935F7; max-width: 800px;">
+         width="60%" 
+         style="border-radius: 10px; border: 2px solid #A935F7; max-width: 400px; display: block; margin: 0 auto;">
   </a>
+</div>
 
   > 👆 برای مشاهده ویدیو روی تصویر بالا کلیک کنید 👆
 </div>
