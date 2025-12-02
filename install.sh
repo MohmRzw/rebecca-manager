@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Rebecca Manager - by Mohmrzw
-# Final Version: Merged CLI Control Menu
+# Version: 1.1.0
+# Changes:
+#   - Added admin role selection (standard / reseller / sudo / full_access)
+#   - Added short tip for opening the original Rebecca menu (run: rebecca)
 
 PANEL_DIR="/opt/rebecca"
 PANEL_SERVICE_NAME="rebecca"
@@ -319,12 +322,23 @@ banner() {
                 status="${RED}EXPIRED/INV${RESET}"
                 days_str="-"
             else
-                if (( days < 0 )); then status="${RED}EXPIRED${RESET}"; else status="${GREEN}VALID${RESET}"; fi
+                if (( days < 0 )); then
+                    status="${RED}EXPIRED${RESET}"
+                else
+                    status="${GREEN}VALID${RESET}"
+                fi
                 days_str="${days} days"
             fi
             printf "    ${CYAN}%-25s${RESET} %-15s %s\n" "$d" "$status" "$days_str"
         done
         echo -e "${THIN_BORDER}"
+    fi
+
+    # original Rebecca menu
+    if [[ "$PANEL_INSTALLED" == "yes" ]]; then
+        echo
+        echo -e "${WHITE}Tip:${RESET} To open the original Rebecca menu, run: ${CYAN}rebecca${RESET}"
+        echo
     fi
 }
 
@@ -642,11 +656,37 @@ ssl_menu() {
 
 admins_add() {
     section_title "Create Admin"
-    echo -e "${WHITE}This will run: ${CYAN}rebecca cli admin create${RESET}"
-    echo -e "${WHITE}The CLI will ask for username, password, and role.${RESET}"
+
+    echo -e "${WHITE}Select admin role type:${RESET}"
+    echo -e "  ${CYAN}1)${RESET} standard    - Normal panel access"
+    echo -e "  ${CYAN}2)${RESET} reseller    - Can manage sub-users / clients"
+    echo -e "  ${CYAN}3)${RESET} sudo        - High-level admin (almost full)"
+    echo -e "  ${CYAN}4)${RESET} full_access - Full access to all panel features"
     echo
-    local cmd="rebecca cli admin create"
-    if run_cmd "$cmd"; then ADMIN_CONFIGURED="yes"; save_state; fi
+
+    local role choice
+    while true; do
+        echo -ne "${MAGENTA}Choose role [1-4]: ${RESET}"
+        read -r choice
+        case "$choice" in
+            1) role="standard"; break ;;
+            2) role="reseller"; break ;;
+            3) role="sudo"; break ;;
+            4) role="full_access"; break ;;
+            *) echo -e "${RED}Invalid choice. Please pick between 1–4.${RESET}" ;;
+        esac
+    done
+
+    echo
+    echo -e "${WHITE}This will run:${RESET} ${CYAN}rebecca cli admin create --role $role${RESET}"
+    echo -e "${WHITE}The Rebecca CLI will ask for username and password interactively.${RESET}"
+    echo
+
+    local cmd="rebecca cli admin create --role $role"
+    if run_cmd "$cmd"; then
+        ADMIN_CONFIGURED="yes"
+        save_state
+    fi
 }
 
 admins_delete() {
@@ -660,23 +700,39 @@ admins_delete() {
 
 admins_change_role() {
     section_title "Change Admin Role"
-    echo -e "Usage: rebecca cli admin change-role --username USER --role ROLE"
-    echo -e "Roles example: sudo, full_access"
-    echo
     echo -ne "${CYAN}Username: ${RESET}"
     read -r u
     [[ -z "$u" ]] && { echo "Empty input."; press_enter; return; }
-    echo -ne "${CYAN}New Role: ${RESET}"
-    read -r r
-    [[ -z "$r" ]] && { echo "Empty input."; press_enter; return; }
-    local cmd="rebecca cli admin change-role --username $u --role $r"
+
+    echo
+    echo -e "${WHITE}Select new role for ${CYAN}$u${WHITE}:${RESET}"
+    echo -e "  ${CYAN}1)${RESET} standard"
+    echo -e "  ${CYAN}2)${RESET} reseller"
+    echo -e "  ${CYAN}3)${RESET} sudo"
+    echo -e "  ${CYAN}4)${RESET} full_access"
+    echo
+
+    local role choice
+    while true; do
+        echo -ne "${MAGENTA}Choose role [1-4]: ${RESET}"
+        read -r choice
+        case "$choice" in
+            1) role="standard"; break ;;
+            2) role="reseller"; break ;;
+            3) role="sudo"; break ;;
+            4) role="full_access"; break ;;
+            *) echo -e "${RED}Invalid choice. Please pick between 1–4.${RESET}" ;;
+        esac
+    done
+
+    local cmd="rebecca cli admin change-role --username $u --role $role"
     run_cmd "$cmd"
 }
 
 admins_import_from_env() {
     section_title "Import Admin from Env"
     echo -e "${WHITE}Runs: ${CYAN}rebecca cli admin import-from-env${RESET}"
-    echo -e "Ensure .env has sudo admin variables set."
+    echo -e "Make sure your .env file has sudo admin variables configured."
     echo
     local cmd="rebecca cli admin import-from-env"
     if run_cmd "$cmd"; then ADMIN_CONFIGURED="yes"; save_state; fi
